@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="4dp"
+    app:cardBackgroundColor="#CC141419"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="2dp"
+    android:foreground="?android:attr/selectableItemBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        android:gravity="center_vertical">
+
+        <!-- Left Favorite Button -->
+        <ImageButton
+            android:id="@+id/btnFavorite"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_star_border"
+            android:contentDescription="Favorite"
+            android:padding="6dp" />
+
+        <!-- Center Server Details -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp">
+
+            <!-- Hostname & Lock -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:id="@+id/ivPassword"
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:src="@drawable/ic_lock"
+                    android:visibility="gone"
+                    android:layout_marginEnd="4dp"
+                    android:contentDescription="Password Protected" />
+
+                <TextView
+                    android:id="@+id/tvHostname"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="SA-MP Server Name"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+            </LinearLayout>
+
+            <!-- Address and Tags -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="3dp">
+
+                <TextView
+                    android:id="@+id/tvAddress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="127.0.0.1:7777"
+                    android:textColor="#99FFFFFF"
+                    android:textSize="11sp"
+                    android:fontFamily="monospace" />
+
+                <TextView
+                    android:id="@+id/tvGamemode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_badge_tag"
+                    android:paddingHorizontal="6dp"
+                    android:paddingVertical="1dp"
+                    android:text="Roleplay"
+                    android:textColor="#BBBBBB"
+                    android:textSize="10sp"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+
+                <TextView
+                    android:id="@+id/tvLanguage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:background="@drawable/bg_badge_tag"
+                    android:paddingHorizontal="6dp"
+                    android:paddingVertical="1dp"
+                    android:text="EN"
+                    android:textColor="#888888"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/tvPing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="45ms"
+                    android:textColor="#4CAF50"
+                    android:textSize="11sp"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Right: Player Count & Connect Button -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- Player badge -->
+            <LinearLayout
+                android:id="@+id/layoutPlayerBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_badge_players"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:gravity="center"
+                android:layout_marginEnd="8dp">
+
+                <TextView
+                    android:id="@+id/tvPlayers"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="128/500"
+                    android:textColor="#00E676"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Quick Connect Button -->
+            <Button
+                android:id="@+id/btnConnect"
+                android:layout_width="88dp"
+                android:layout_height="36dp"
+                android:background="@drawable/bg_button_connect"
+                android:text="PLAY"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

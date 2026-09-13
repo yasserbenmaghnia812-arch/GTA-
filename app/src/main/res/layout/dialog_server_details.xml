@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_dialog_custom"
+    android:padding="20dp"
+    android:minWidth="340dp">
+
+    <!-- Header: Server Name & Close -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/dialogTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Server Details"
+            android:textColor="#FFFFFF"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:maxLines="2"
+            android:ellipsize="end" />
+
+        <ImageButton
+            android:id="@+id/dialogBtnFavorite"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_star_border"
+            android:contentDescription="Favorite"
+            android:padding="6dp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#2E2E3E"
+        android:layout_marginVertical="10dp" />
+
+    <!-- Address & Ping Row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/dialogAddress"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="127.0.0.1:7777"
+            android:textColor="#FF3A30"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:fontFamily="monospace" />
+
+        <ImageButton
+            android:id="@+id/dialogBtnCopy"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_copy"
+            android:contentDescription="Copy IP"
+            android:padding="6dp" />
+
+        <TextView
+            android:id="@+id/dialogPing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ping: checking..."
+            android:textColor="#4CAF50"
+            android:textSize="12sp"
+            android:layout_marginStart="8dp" />
+    </LinearLayout>
+
+    <!-- Info Grid: Gamemode, Language, Players, Version -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:baselineAligned="false">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="GAMEMODE"
+                android:textColor="#777777"
+                android:textSize="10sp" />
+
+            <TextView
+                android:id="@+id/dialogGamemode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Roleplay"
+                android:textColor="#DDDDDD"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="LANGUAGE"
+                android:textColor="#777777"
+                android:textSize="10sp" />
+
+            <TextView
+                android:id="@+id/dialogLanguage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="English"
+                android:textColor="#DDDDDD"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PLAYERS"
+                android:textColor="#777777"
+                android:textSize="10sp" />
+
+            <TextView
+                android:id="@+id/dialogPlayers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0 / 100"
+                android:textColor="#00E676"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="VERSION"
+                android:textColor="#777777"
+                android:textSize="10sp" />
+
+            <TextView
+                android:id="@+id/dialogVersion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0.3.7"
+                android:textColor="#DDDDDD"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#2E2E3E"
+        android:layout_marginVertical="10dp" />
+
+    <!-- Nickname Input -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="PLAYER NICKNAME"
+        android:textColor="#AAAAAA"
+        android:textSize="11sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/dialogEtNickname"
+        android:layout_width="match_parent"
+        android:layout_height="38dp"
+        android:background="@drawable/bg_search_field"
+        android:hint="Player_Name"
+        android:textColorHint="#66FFFFFF"
+        android:textColor="#FFFFFF"
+        android:textSize="13sp"
+        android:paddingHorizontal="10dp"
+        android:singleLine="true"
+        android:layout_marginTop="4dp" />
+
+    <!-- Password Input (optional/if protected) -->
+    <TextView
+        android:id="@+id/tvPasswordLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SERVER PASSWORD (OPTIONAL)"
+        android:textColor="#AAAAAA"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        android:layout_marginTop="10dp" />
+
+    <EditText
+        android:id="@+id/dialogEtPassword"
+        android:layout_width="match_parent"
+        android:layout_height="38dp"
+        android:background="@drawable/bg_search_field"
+        android:hint="Leave empty if none"
+        android:textColorHint="#66FFFFFF"
+        android:textColor="#FFFFFF"
+        android:textSize="13sp"
+        android:paddingHorizontal="10dp"
+        android:singleLine="true"
+        android:inputType="textPassword"
+        android:layout_marginTop="4dp" />
+
+    <!-- Action Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:layout_marginTop="16dp">
+
+        <Button
+            android:id="@+id/dialogBtnCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="38dp"
+            android:background="@drawable/bg_tab_unselected"
+            android:text="CANCEL"
+            android:textColor="#CCCCCC"
+            android:textSize="12sp"
+            android:paddingHorizontal="16dp" />
+
+        <Button
+            android:id="@+id/dialogBtnConnect"
+            android:layout_width="wrap_content"
+            android:layout_height="38dp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/bg_button_connect"
+            android:text="CONNECT NOW"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:paddingHorizontal="20dp" />
+    </LinearLayout>
+
+</LinearLayout>

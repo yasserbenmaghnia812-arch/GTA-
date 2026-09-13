@@ -1,0 +1,82 @@
+[
+  {
+    "ip": "185.169.134.157:7777",
+    "hn": "Advance RolePlay Chocolate | X2 Exp",
+    "pc": 35,
+    "pm": 1000,
+    "gm": "Advance RP",
+    "la": "Russian",
+    "pa": false,
+    "vn": "0.3.7-R2"
+  },
+  {
+    "ip": "149.202.89.4:7777",
+    "hn": "Horizon Roleplay | 0.3.7",
+    "pc": 120,
+    "pm": 500,
+    "gm": "Horizon RP 3.2",
+    "la": "English",
+    "pa": false,
+    "vn": "0.3.7-R2"
+  },
+  {
+    "ip": "37.221.209.130:7777",
+    "hn": "WTLS 2 - West Coast Grand Theft Auto",
+    "pc": 85,
+    "pm": 300,
+    "gm": "WTLS Freeroam / RPG",
+    "la": "International",
+    "pa": false,
+    "vn": "0.3.7"
+  },
+  {
+    "ip": "185.169.134.3:7777",
+    "hn": "Arizona RP | Phoenix [Bonus 100kk]",
+    "pc": 210,
+    "pm": 1000,
+    "gm": "Arizona RolePlay",
+    "la": "Russian",
+    "pa": false,
+    "vn": "0.3.7"
+  },
+  {
+    "ip": "176.32.39.200:7777",
+    "hn": "Absolute Play [RP1] Platinum",
+    "pc": 150,
+    "pm": 800,
+    "gm": "Absolute RP v3.8",
+    "la": "Russian",
+    "pa": false,
+    "vn": "0.3.7"
+  },
+  {
+    "ip": "51.254.181.189:7777",
+    "hn": "Ultra Stunt & Drift SA-MP Server",
+    "pc": 42,
+    "pm": 200,
+    "gm": "Stunt/Drift/DM",
+    "la": "English",
+    "pa": false,
+    "vn": "0.3.7"
+  },
+  {
+    "ip": "151.80.47.165:7777",
+    "hn": "Mike\'s Cops and Robbers [CnR]",
+    "pc": 65,
+    "pm": 250,
+    "gm": "MSRC Cops & Robbers",
+    "la": "English",
+    "pa": false,
+    "vn": "0.3.7"
+  },
+  {
+    "ip": "127.0.0.1:7777",
+    "hn": "Localhost Development Server",
+    "pc": 0,
+    "pm": 100,
+    "gm": "Grand Larceny",
+    "la": "English",
+    "pa": false,
+    "vn": "0.3.7"
+  }
+]

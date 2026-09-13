@@ -1,0 +1,6 @@
+{
+  "name": "GTA 2.11",
+  "description": "Android SA-MP client for Grand Theft Auto: San Andreas",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
