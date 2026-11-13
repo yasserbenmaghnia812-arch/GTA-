@@ -8,7 +8,7 @@ An original 3D Android game foundation built with Godot 4.7.2. The first playabl
 - Third-person character movement, sprinting, jumping, and camera look.
 - Four driveable vehicle presets: sedan, sport, SUV, and pickup; press **E** near a vehicle to enter or exit. While driving, press **V** / **TUNE** to cycle Balanced, Sport, and Grip handling/paint profiles.
 - Two lightweight visual traffic cars and three low-cost pedestrian patrols. These are simple scripted movers, not full traffic physics or navigation.
-- Wanted system with up to three police pursuit units; firing at pedestrians raises wanted level.
+- Wanted system with up to three police pursuit units; firing at pedestrians raises wanted level. Police units use lightweight ray-based obstacle steering during pursuit.
 - Three weapon types (pistol, rifle, shotgun), magazines, reserve ammo, spread, fire rates, and timed reloads.
 - Health, police damage, and automatic respawn.
 - Simple target-practice ray shooting; press **F**.
@@ -16,7 +16,7 @@ An original 3D Android game foundation built with Godot 4.7.2. The first playabl
 - Mission progress and credits persist between sessions using Godot `ConfigFile` in `user://`.
 - Mobile touch D-pad and action buttons.
 - Host / Join using ENet UDP port **7777**, with up to **8 players total** (host plus 7 clients).
-- Server checks remote player coordinates and rejects implausible movement jumps; this remains a prototype, not a cheat-proof authoritative server.
+- Server checks remote player coordinates and rejects implausible movement jumps; remote avatars snap to their first received snapshot and interpolate subsequent updates. This remains a prototype, not a cheat-proof authoritative server.
 - Android export preset for **ARM64** and internet permission.
 - GitHub Actions workflow for producing a debug APK artifact.
 
@@ -63,7 +63,9 @@ The initial profile uses Godot's Compatibility renderer, primitive meshes, no re
 3. Replicate vehicle control, weapon events, NPC/police state, health, and missions over the network.
 4. Add server-authoritative hit validation, lobby flow, reconnection, dedicated server deployment, and network stress tests.
 5. Add weapon recoil, aiming, audio feedback, hit indicators, and additional mission types.
-5. Add a separate football/sports mode using original ball physics, team tactics, player switching, and match rules.
+6. Add a separate football/sports mode using original ball physics, team tactics, player switching, and match rules.
+
+See [MULTIPLAYER_AND_ANDROID_TEST_PLAN.md](MULTIPLAYER_AND_ANDROID_TEST_PLAN.md) for the two-device LAN test and Galaxy A06 release gate.
 
 ## Inspirations and licensing
 
