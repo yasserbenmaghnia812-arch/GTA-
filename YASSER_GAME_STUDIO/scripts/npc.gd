@@ -7,8 +7,11 @@ var patrol_points: Array[Vector3] = []
 var patrol_index: int = 0
 var gravity: float = 9.8
 
-func set_patrol_points(points: Array[Vector3]) -> void:
-	patrol_points = points.duplicate()
+func set_patrol_points(points: Array) -> void:
+	patrol_points.clear()
+	for point in points:
+		if point is Vector3:
+			patrol_points.append(point)
 	if not patrol_points.is_empty():
 		global_position = patrol_points[0]
 
