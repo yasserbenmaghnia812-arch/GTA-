@@ -5,6 +5,7 @@ signal join_requested(address: String)
 
 var status_label: Label
 var address_input: LineEdit
+var objective_label: Label
 
 func _ready() -> void:
 	var root := Control.new()
@@ -15,6 +16,13 @@ func _ready() -> void:
 	var screen := get_viewport().get_visible_rect().size
 	var width := screen.x
 	var height := screen.y
+
+	objective_label = Label.new()
+	objective_label.position = Vector2(width * 0.22, 58)
+	objective_label.size = Vector2(width * 0.56, 34)
+	objective_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	objective_label.add_theme_color_override("font_color", Color(0.75, 0.98, 1.0))
+	root.add_child(objective_label)
 
 	status_label = Label.new()
 	status_label.position = Vector2(width - 390, 14)
@@ -78,3 +86,7 @@ func _release_actions(actions: Array[String]) -> void:
 func set_status(message: String) -> void:
 	if is_instance_valid(status_label):
 		status_label.text = message
+
+func set_objective(message: String) -> void:
+	if is_instance_valid(objective_label):
+		objective_label.text = message
