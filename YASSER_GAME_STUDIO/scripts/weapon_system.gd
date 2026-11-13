@@ -66,7 +66,7 @@ func try_fire(camera: Camera3D, shooter: Node3D) -> bool:
 	var right := camera.global_transform.basis.x
 	var up := camera.global_transform.basis.y
 	var pellet_count := int(data["pellets"])
-	for pellet_index in range(pellet_count):
+	for _pellet_index in range(pellet_count):
 		var spread := float(data["spread"])
 		var direction := (forward
 			+ right * rng.randf_range(-spread, spread)
@@ -80,7 +80,7 @@ func try_fire(camera: Camera3D, shooter: Node3D) -> bool:
 			continue
 
 		var collider: Object = hit.get("collider")
-		if collider == null or not collider is Node:
+		if collider == null or not (collider is Node):
 			continue
 		var hit_node := collider as Node
 		if hit_node.is_in_group("npcs"):
@@ -88,7 +88,7 @@ func try_fire(camera: Camera3D, shooter: Node3D) -> bool:
 		if hit_node.is_in_group("police"):
 			crime_committed.emit(hit.get("position", origin))
 		if hit_node.has_method("take_damage"):
-			hit_node.take_damage(float(data["damage"]))
+			hit_node.call("take_damage", float(data["damage"]))
 
 	publish_status()
 	return true
