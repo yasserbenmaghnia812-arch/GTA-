@@ -76,13 +76,13 @@ jobs:
           export ANDROID_SDK_ROOT="$ANDROID_HOME"
           cp "$HOME/.android/debug.keystore" .ci-debug.keystore
           godot --headless --editor --path YASSER_GAME_STUDIO --quit
-          mkdir -p YASSER_GAME_STUDIO/build
-          godot --headless --path YASSER_GAME_STUDIO --export-debug "Android" YASSER_GAME_STUDIO/build/YASSER-OPEN-WORLD-debug.apk
+          mkdir -p "$GITHUB_WORKSPACE/YASSER_GAME_STUDIO/build"
+          godot --headless --path YASSER_GAME_STUDIO --export-debug "Android" "$GITHUB_WORKSPACE/YASSER_GAME_STUDIO/build/YASSER-OPEN-WORLD-debug.apk"
 
       - name: Verify APK
         run: |
-          test -s YASSER_GAME_STUDIO/build/YASSER-OPEN-WORLD-debug.apk
-          "$ANDROID_HOME/build-tools/35.0.1/apksigner" verify YASSER_GAME_STUDIO/build/YASSER-OPEN-WORLD-debug.apk
+          test -s "$GITHUB_WORKSPACE/YASSER_GAME_STUDIO/build/YASSER-OPEN-WORLD-debug.apk"
+          "$ANDROID_HOME/build-tools/35.0.1/apksigner" verify "$GITHUB_WORKSPACE/YASSER_GAME_STUDIO/build/YASSER-OPEN-WORLD-debug.apk"
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v7
