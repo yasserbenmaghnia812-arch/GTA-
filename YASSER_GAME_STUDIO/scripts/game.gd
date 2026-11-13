@@ -346,7 +346,7 @@ func _apply_remote_transform(peer_id: int, position: Vector3, yaw: float) -> voi
 		return
 	var avatar: Node = remote_players[peer_id]
 	if is_instance_valid(avatar):
-		avatar.set_network_transform(position, yaw)
+		avatar.call("set_network_transform", position, yaw)
 
 func _set_status(message: String) -> void:
 	if is_instance_valid(hud):
