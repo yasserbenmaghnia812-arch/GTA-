@@ -52,8 +52,8 @@ func _sync_police() -> void:
 		var index := police_units.size()
 		var direction := Vector3.RIGHT.rotated(Vector3.UP, float(index) * TAU / float(MAX_WANTED_LEVEL))
 		var spawn_position := target.global_position + direction * 19.0
-		var officer: CharacterBody3D = POLICE_SCRIPT.new()
-		officer.configure(target, 7.0 + float(wanted_level) * 1.2)
+		var officer: Variant = POLICE_SCRIPT.new()
+		officer.call("configure", target, 7.0 + float(wanted_level) * 1.2)
 		officer.global_position = spawn_position
 		add_child(officer)
 		police_units.append(officer)
