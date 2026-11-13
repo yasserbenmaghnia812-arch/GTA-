@@ -100,7 +100,7 @@ func _physics_process(delta: float) -> void:
 func _toggle_vehicle() -> void:
 	if current_vehicle != null:
 		var vehicle := current_vehicle
-		vehicle.set_driver_active(false)
+		vehicle.call("set_driver_active", false)
 		current_vehicle = null
 		visible = true
 		collision_layer = 1
@@ -118,7 +118,7 @@ func _toggle_vehicle() -> void:
 				nearest = candidate
 	if nearest != null:
 		current_vehicle = nearest
-		current_vehicle.set_driver_active(true)
+		current_vehicle.call("set_driver_active", true)
 		visible = false
 		collision_layer = 0
 		collision_mask = 0
@@ -129,7 +129,7 @@ func apply_damage(amount: float) -> void:
 	if health <= 0.0:
 		respawn_timer = 3.0
 		if current_vehicle != null:
-			current_vehicle.set_driver_active(false)
+			current_vehicle.call("set_driver_active", false)
 			current_vehicle = null
 		visible = true
 		collision_layer = 1
