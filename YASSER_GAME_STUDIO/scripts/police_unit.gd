@@ -62,7 +62,7 @@ func _physics_process(delta: float) -> void:
 	if distance < 3.0 and attack_cooldown <= 0.0:
 		attack_cooldown = 1.4
 		if target.has_method("apply_damage"):
-			target.apply_damage(7.0)
+			target.call("apply_damage", 7.0)
 
 func take_damage(amount: float) -> void:
 	health -= amount
