@@ -6,8 +6,8 @@ An original 3D Android game foundation built with Godot 4.7.2. The first playabl
 
 - Procedural city blocks and roads generated at runtime.
 - Third-person character movement, sprinting, jumping, and camera look.
-- Four driveable vehicle presets: sedan, sport, SUV, and pickup; press **E** near a vehicle to enter or exit.
-- Two lightweight visual traffic cars and three low-cost pedestrian patrols.
+- Four driveable vehicle presets: sedan, sport, SUV, and pickup; press **E** near a vehicle to enter or exit. While driving, press **V** / **TUNE** to cycle Balanced, Sport, and Grip handling/paint profiles.
+- Two lightweight visual traffic cars and three low-cost pedestrian patrols. These are simple scripted movers, not full traffic physics or navigation.
 - Wanted system with up to three police pursuit units; firing at pedestrians raises wanted level.
 - Three weapon types (pistol, rifle, shotgun), magazines, reserve ammo, spread, fire rates, and timed reloads.
 - Health, police damage, and automatic respawn.
@@ -30,6 +30,7 @@ An original 3D Android game foundation built with Godot 4.7.2. The first playabl
 | Enter / exit car | E | ENTER / EXIT |
 | Fire | Hold F | FIRE |
 | Next weapon | Q | WEAPON |
+| Tune vehicle (while driving) | V | TUNE |
 | Reload | R | RELOAD |
 | Drive / steer | WASD | D-pad |
 | Brake | Space | BRAKE |
