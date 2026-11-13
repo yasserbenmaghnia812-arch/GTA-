@@ -1,10 +1,20 @@
 extends VehicleBody3D
 
+@export var vehicle_label: String = "COUPE"
+@export var paint_color: Color = Color(0.16, 0.42, 0.78)
 @export var max_engine_force: float = 1450.0
 @export var max_brake_force: float = 38.0
 @export var max_steering_angle: float = 0.48
 
 var driver_active: bool = false
+
+func _ready() -> void:
+	add_to_group("vehicles")
+	var body_mesh := get_node_or_null("Body") as MeshInstance3D
+	if body_mesh != null:
+		var material := StandardMaterial3D.new()
+		material.albedo_color = paint_color
+		body_mesh.material_override = material
 
 func set_driver_active(active: bool) -> void:
 	driver_active = active
