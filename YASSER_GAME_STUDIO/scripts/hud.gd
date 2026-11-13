@@ -84,6 +84,7 @@ func _ready() -> void:
 	_add_action_button(root, "BRAKE", Vector2(width - 118, height - 98), ["vehicle_brake"], Vector2(100, 54))
 	_add_action_button(root, "WEAPON", Vector2(width - 238, height - 250), ["weapon_next"], Vector2(102, 52))
 	_add_action_button(root, "RELOAD", Vector2(width - 118, height - 250), ["reload"], Vector2(100, 52))
+	_add_action_button(root, "TUNE", Vector2(width - 238, height - 310), ["vehicle_tune"], Vector2(102, 52))
 
 func _button(label: String, position: Vector2, size: Vector2) -> Button:
 	var button := Button.new()
