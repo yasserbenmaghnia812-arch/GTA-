@@ -35,13 +35,16 @@ func report_crime(_crime_position: Vector3) -> void:
 	wanted_changed.emit(wanted_level)
 
 func _sync_police() -> void:
+	var active_units: Array[Node] = []
 	for unit in police_units:
-		if not is_instance_valid(unit):
-			continue
-		if police_units.size() > wanted_level:
-			unit.queue_free()
+		if is_instance_valid(unit):
+			active_units.append(unit)
+	police_units = active_units
+
 	while police_units.size() > wanted_level:
-		police_units.pop_back()
+		var unit: Node = police_units.pop_back()
+		if is_instance_valid(unit):
+			unit.queue_free()
 
 	while police_units.size() < wanted_level:
 		if not is_instance_valid(target):
