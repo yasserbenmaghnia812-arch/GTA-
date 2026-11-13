@@ -35,8 +35,8 @@ func _ready() -> void:
 	root.add_child(weapon_label)
 
 	health_label = Label.new()
-	health_label.position = Vector2(width - 180, height - 38)
-	health_label.size = Vector2(160, 28)
+	health_label.position = Vector2(width - 220, 96)
+	health_label.size = Vector2(200, 28)
 	health_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	health_label.add_theme_color_override("font_color", Color(0.55, 1.0, 0.65))
 	root.add_child(health_label)
