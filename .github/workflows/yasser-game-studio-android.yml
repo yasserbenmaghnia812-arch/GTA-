@@ -1,0 +1,93 @@
+name: YASSER GAME STUDIO - Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - yasser-game-studio-foundation
+    paths:
+      - "YASSER_GAME_STUDIO/**"
+      - ".github/workflows/yasser-game-studio-android.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build-android:
+    name: Export Android ARM64 APK
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v4
+
+      - name: Install Android build packages
+        run: |
+          sdkmanager \
+            "platform-tools" \
+            "platforms;android-35" \
+            "build-tools;35.0.1" \
+            "ndk;28.1.13356709" \
+            "cmake;3.10.2.4988404"
+
+      - name: Install Godot 4.7.2 and export templates
+        shell: bash
+        run: |
+          set -euo pipefail
+          GODOT_VERSION="4.7.2"
+          GODOT_TAG="$GODOT_VERSION-stable"
+          wget -q "https://github.com/godotengine/godot-builds/releases/download/$GODOT_TAG/Godot_v$GODOT_TAG"_linux.x86_64.zip -O /tmp/godot.zip
+          unzip -q /tmp/godot.zip -d /tmp/godot-bin
+          sudo install -m 0755 "/tmp/godot-bin/Godot_v$GODOT_TAG"_linux.x86_64 /usr/local/bin/godot
+          wget -q "https://github.com/godotengine/godot-builds/releases/download/$GODOT_TAG/Godot_v$GODOT_TAG"_export_templates.tpz -O /tmp/godot-templates.tpz
+          mkdir -p "$HOME/.local/share/godot/export_templates/$GODOT_VERSION.stable"
+          unzip -q /tmp/godot-templates.tpz -d /tmp/godot-templates
+          cp -a /tmp/godot-templates/templates/. "$HOME/.local/share/godot/export_templates/$GODOT_VERSION.stable/"
+          printf '%s' "$GODOT_VERSION.stable" > "$HOME/.local/share/godot/export_templates/$GODOT_VERSION.stable/version.txt"
+          godot --version
+
+      - name: Create CI debug keystore
+        run: |
+          mkdir -p "$HOME/.android"
+          keytool -genkeypair -v \
+            -keystore "$HOME/.android/debug.keystore" \
+            -storepass android \
+            -alias androiddebugkey \
+            -keypass android \
+            -dname "CN=Android Debug,O=Android,C=US" \
+            -keyalg RSA -keysize 2048 -validity 10000
+
+      - name: Import and export Godot project
+        env:
+          GODOT_ANDROID_KEYSTORE_DEBUG_PATH: "${{ github.workspace }}/.ci-debug.keystore"
+          GODOT_ANDROID_KEYSTORE_DEBUG_USER: androiddebugkey
+          GODOT_ANDROID_KEYSTORE_DEBUG_PASSWORD: android
+        run: |
+          export ANDROID_SDK_ROOT="$ANDROID_HOME"
+          cp "$HOME/.android/debug.keystore" .ci-debug.keystore
+          godot --headless --editor --path YASSER_GAME_STUDIO --quit
+          mkdir -p "$GITHUB_WORKSPACE/YASSER_GAME_STUDIO/build"
+          godot --headless --path YASSER_GAME_STUDIO --export-debug "Android" "$GITHUB_WORKSPACE/YASSER_GAME_STUDIO/build/YASSER-OPEN-WORLD-debug.apk"
+
+      - name: Verify APK
+        run: |
+          test -s "$GITHUB_WORKSPACE/YASSER_GAME_STUDIO/build/YASSER-OPEN-WORLD-debug.apk"
+          "$ANDROID_HOME/build-tools/35.0.1/apksigner" verify "$GITHUB_WORKSPACE/YASSER_GAME_STUDIO/build/YASSER-OPEN-WORLD-debug.apk"
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: YASSER-OPEN-WORLD-APK
+          path: YASSER_GAME_STUDIO/build/YASSER-OPEN-WORLD-debug.apk
+          if-no-files-found: error
+          retention-days: 14

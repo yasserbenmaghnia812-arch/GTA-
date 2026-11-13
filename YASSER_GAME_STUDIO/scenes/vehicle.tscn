@@ -1,0 +1,47 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/vehicle.gd" id="1_vehicle"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_car"]
+size = Vector3(1.8, 0.7, 3.8)
+
+[sub_resource type="BoxMesh" id="BoxMesh_car"]
+size = Vector3(1.8, 0.7, 3.8)
+
+[node name="Vehicle" type="VehicleBody3D" groups=["vehicles"]]
+mass = 1100.0
+linear_damp = 0.12
+angular_damp = 0.6
+script = ExtResource("1_vehicle")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+position = Vector3(0, 0.35, 0)
+shape = SubResource("BoxShape3D_car")
+
+[node name="Body" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.35, 0)
+mesh = SubResource("BoxMesh_car")
+
+[node name="WheelFrontLeft" type="VehicleWheel3D" parent="."]
+position = Vector3(-0.76, 0, -1.22)
+use_as_traction = false
+use_as_steering = true
+wheel_radius = 0.34
+
+[node name="WheelFrontRight" type="VehicleWheel3D" parent="."]
+position = Vector3(0.76, 0, -1.22)
+use_as_traction = false
+use_as_steering = true
+wheel_radius = 0.34
+
+[node name="WheelRearLeft" type="VehicleWheel3D" parent="."]
+position = Vector3(-0.76, 0, 1.22)
+use_as_traction = true
+use_as_steering = false
+wheel_radius = 0.34
+
+[node name="WheelRearRight" type="VehicleWheel3D" parent="."]
+position = Vector3(0.76, 0, 1.22)
+use_as_traction = true
+use_as_steering = false
+wheel_radius = 0.34
