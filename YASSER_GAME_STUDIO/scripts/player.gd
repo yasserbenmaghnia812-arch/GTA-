@@ -38,8 +38,9 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		_look(event.relative)
 	elif event is InputEventScreenDrag:
-		var screen_width := get_viewport_rect().size.x
-		if event.position.x > screen_width * 0.45 and event.position.y < get_viewport_rect().size.y - 210.0:
+		var viewport_size: Vector2 = get_viewport().get_visible_rect().size
+		var screen_width: float = viewport_size.x
+		if event.position.x > screen_width * 0.45 and event.position.y < viewport_size.y - 210.0:
 			_look(event.relative)
 	elif event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
