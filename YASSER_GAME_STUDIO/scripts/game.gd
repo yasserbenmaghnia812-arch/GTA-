@@ -34,9 +34,9 @@ func _ready() -> void:
 	hud.host_requested.connect(host_game)
 	hud.join_requested.connect(join_game)
 	mission_manager = MISSION_SCRIPT.new()
-	add_child(mission_manager)
 	mission_manager.objective_updated.connect(hud.set_objective)
 	mission_manager.mission_completed.connect(_on_mission_completed)
+	add_child(mission_manager)
 	_set_status("SOLO MODE  |  E: ENTER VEHICLE  |  F: FIRE")
 
 func _process(delta: float) -> void:
