@@ -6,12 +6,18 @@ const HUD_SCRIPT = preload("res://scripts/hud.gd")
 const REMOTE_SCRIPT = preload("res://scripts/remote_avatar.gd")
 const TARGET_SCRIPT = preload("res://scripts/target.gd")
 const MISSION_SCRIPT = preload("res://scripts/mission_manager.gd")
+const CITY_AI_SCRIPT = preload("res://scripts/city_ai.gd")
+const POLICE_MANAGER_SCRIPT = preload("res://scripts/police_manager.gd")
 
-var player: CharacterBody3D
-var vehicle: VehicleBody3D
+var player
+var vehicle
 var hud: CanvasLayer
-var mission_manager: Node3D
+var mission_manager
+var city_ai
+var police_manager
 var remote_players: Dictionary = {}
+var remote_last_positions: Dictionary = {}
+var remote_last_updates_msec: Dictionary = {}
 var _network_timer: float = 0.0
 var _rng := RandomNumberGenerator.new()
 
@@ -26,13 +32,32 @@ func _ready() -> void:
 	player.add_to_group("player")
 
 	vehicle = VEHICLE_SCENE.instantiate()
+	vehicle.vehicle_label = "SEDAN"
+	vehicle.paint_color = Color(0.15, 0.38, 0.78)
+	vehicle.max_engine_force = 1450.0
 	add_child(vehicle)
 	vehicle.global_position = Vector3(3.0, 0.55, 9.0)
+	_spawn_extra_vehicles()
 
 	hud = HUD_SCRIPT.new()
 	add_child(hud)
 	hud.host_requested.connect(host_game)
 	hud.join_requested.connect(join_game)
+	player.weapon_status_changed.connect(hud.set_weapon_info)
+	player.health_changed.connect(hud.set_health)
+	hud.set_health(int(player.health))
+	hud.set_wanted(0)
+	player.weapon_system.publish_status()
+
+	city_ai = CITY_AI_SCRIPT.new()
+	add_child(city_ai)
+
+	police_manager = POLICE_MANAGER_SCRIPT.new()
+	police_manager.configure(player)
+	police_manager.wanted_changed.connect(hud.set_wanted)
+	player.crime_reported.connect(police_manager.report_crime)
+	add_child(police_manager)
+
 	mission_manager = MISSION_SCRIPT.new()
 	mission_manager.objective_updated.connect(hud.set_objective)
 	mission_manager.mission_completed.connect(_on_mission_completed)
@@ -58,6 +83,8 @@ func _setup_input() -> void:
 	_bind_key("jump", KEY_SPACE)
 	_bind_key("interact", KEY_E)
 	_bind_key("fire", KEY_F)
+	_bind_key("weapon_next", KEY_Q)
+	_bind_key("reload", KEY_R)
 	_bind_key("vehicle_forward", KEY_W)
 	_bind_key("vehicle_reverse", KEY_S)
 	_bind_key("vehicle_left", KEY_A)
@@ -128,6 +155,22 @@ func _build_world() -> void:
 	_add_target(Vector3(5, 0, -14))
 	_add_target(Vector3(0, 0, -22))
 
+
+func _spawn_extra_vehicles() -> void:
+	var presets: Array[Dictionary] = [
+		{"label": "SPORT", "color": Color(0.78, 0.16, 0.12), "force": 1950.0, "steering": 0.55, "position": Vector3(-3.2, 0.55, 18.0)},
+		{"label": "SUV", "color": Color(0.16, 0.55, 0.28), "force": 1650.0, "steering": 0.42, "position": Vector3(3.2, 0.55, -18.0)},
+		{"label": "PICKUP", "color": Color(0.72, 0.58, 0.20), "force": 1850.0, "steering": 0.40, "position": Vector3(-3.2, 0.55, -18.0)}
+	]
+	for preset in presets:
+		var extra: Variant = VEHICLE_SCENE.instantiate()
+		extra.vehicle_label = str(preset["label"])
+		extra.paint_color = preset["color"]
+		extra.max_engine_force = float(preset["force"])
+		extra.max_steering_angle = float(preset["steering"])
+		add_child(extra)
+		extra.global_position = preset["position"]
+
 func _add_road(position: Vector3, size: Vector3, color: Color = Color(0.12, 0.13, 0.15)) -> void:
 	var road := MeshInstance3D.new()
 	var mesh := BoxMesh.new()
@@ -182,7 +225,7 @@ func _add_target(position: Vector3) -> void:
 func host_game() -> void:
 	_disconnect_network()
 	var peer := ENetMultiplayerPeer.new()
-	var error := peer.create_server(7777, 8)
+	var error := peer.create_server(7777, 7)
 	if error != OK:
 		_set_status("HOST ERROR: " + str(error))
 		return
@@ -191,7 +234,7 @@ func host_game() -> void:
 		multiplayer.peer_connected.connect(_on_peer_connected)
 	if not multiplayer.peer_disconnected.is_connected(_on_peer_disconnected):
 		multiplayer.peer_disconnected.connect(_on_peer_disconnected)
-	_set_status("HOSTING UDP 7777  |  MAX 8 PLAYERS")
+	_set_status("HOSTING UDP 7777  |  MAX 8 PLAYERS INCLUDING HOST")
 
 func join_game(address: String) -> void:
 	if address.is_empty():
@@ -216,6 +259,8 @@ func _disconnect_network() -> void:
 	if multiplayer.multiplayer_peer != null:
 		multiplayer.multiplayer_peer.close()
 	multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
+	remote_last_positions.clear()
+	remote_last_updates_msec.clear()
 	for peer_id in remote_players.keys():
 		var avatar: Node = remote_players[peer_id]
 		if is_instance_valid(avatar):
@@ -228,6 +273,8 @@ func _on_peer_connected(peer_id: int) -> void:
 
 func _on_peer_disconnected(peer_id: int) -> void:
 	rpc("remove_remote", peer_id)
+	remote_last_positions.erase(peer_id)
+	remote_last_updates_msec.erase(peer_id)
 	_set_status("PLAYER LEFT  |  ID " + str(peer_id))
 
 func _on_connected_to_server() -> void:
@@ -238,6 +285,7 @@ func _on_connection_failed() -> void:
 	_set_status("CONNECTION FAILED  |  CHECK IP / PORT")
 
 func _on_server_disconnected() -> void:
+	_disconnect_network()
 	_set_status("SERVER DISCONNECTED")
 
 @rpc("any_peer", "reliable")
@@ -271,6 +319,19 @@ func remove_remote(peer_id: int) -> void:
 func server_receive_transform(peer_id: int, position: Vector3, yaw: float) -> void:
 	if not multiplayer.is_server() or multiplayer.get_remote_sender_id() != peer_id:
 		return
+	if absf(position.x) > 95.0 or absf(position.z) > 95.0 or position.y < -3.0 or position.y > 35.0:
+		return
+
+	var now_msec := Time.get_ticks_msec()
+	if remote_last_positions.has(peer_id):
+		var previous: Vector3 = remote_last_positions[peer_id]
+		var previous_time: int = remote_last_updates_msec.get(peer_id, now_msec)
+		var elapsed := maxf(0.06, float(now_msec - previous_time) / 1000.0)
+		if previous.distance_to(position) > 48.0 * elapsed + 4.0:
+			return
+
+	remote_last_positions[peer_id] = position
+	remote_last_updates_msec[peer_id] = now_msec
 	_apply_remote_transform(peer_id, position, yaw)
 	for connected_peer in multiplayer.get_peers():
 		if connected_peer != peer_id:
