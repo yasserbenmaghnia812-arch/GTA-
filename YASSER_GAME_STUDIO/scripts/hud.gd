@@ -6,6 +6,9 @@ signal join_requested(address: String)
 var status_label: Label
 var address_input: LineEdit
 var objective_label: Label
+var weapon_label: Label
+var health_label: Label
+var wanted_label: Label
 
 func _ready() -> void:
 	var root := Control.new()
@@ -23,6 +26,26 @@ func _ready() -> void:
 	objective_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	objective_label.add_theme_color_override("font_color", Color(0.75, 0.98, 1.0))
 	root.add_child(objective_label)
+
+	weapon_label = Label.new()
+	weapon_label.position = Vector2(width - 270, 62)
+	weapon_label.size = Vector2(250, 30)
+	weapon_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	weapon_label.add_theme_color_override("font_color", Color(1.0, 0.88, 0.58))
+	root.add_child(weapon_label)
+
+	health_label = Label.new()
+	health_label.position = Vector2(width - 180, height - 38)
+	health_label.size = Vector2(160, 28)
+	health_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	health_label.add_theme_color_override("font_color", Color(0.55, 1.0, 0.65))
+	root.add_child(health_label)
+
+	wanted_label = Label.new()
+	wanted_label.position = Vector2(18, 62)
+	wanted_label.size = Vector2(190, 30)
+	wanted_label.add_theme_color_override("font_color", Color(1.0, 0.42, 0.36))
+	root.add_child(wanted_label)
 
 	status_label = Label.new()
 	status_label.position = Vector2(width - 390, 14)
@@ -59,6 +82,8 @@ func _ready() -> void:
 	_add_action_button(root, "JUMP", Vector2(width - 224, height - 112), ["jump"], Vector2(88, 60))
 	_add_action_button(root, "ENTER / EXIT", Vector2(width - 224, height - 42), ["interact"], Vector2(132, 54))
 	_add_action_button(root, "BRAKE", Vector2(width - 118, height - 98), ["vehicle_brake"], Vector2(100, 54))
+	_add_action_button(root, "WEAPON", Vector2(width - 238, height - 250), ["weapon_next"], Vector2(102, 52))
+	_add_action_button(root, "RELOAD", Vector2(width - 118, height - 250), ["reload"], Vector2(100, 52))
 
 func _button(label: String, position: Vector2, size: Vector2) -> Button:
 	var button := Button.new()
@@ -90,3 +115,15 @@ func set_status(message: String) -> void:
 func set_objective(message: String) -> void:
 	if is_instance_valid(objective_label):
 		objective_label.text = message
+
+func set_weapon_info(weapon_name: String, magazine: int, reserve: int) -> void:
+	if is_instance_valid(weapon_label):
+		weapon_label.text = weapon_name + "  " + str(magazine) + " / " + str(reserve)
+
+func set_health(value: int) -> void:
+	if is_instance_valid(health_label):
+		health_label.text = "HEALTH  " + str(value)
+
+func set_wanted(level: int) -> void:
+	if is_instance_valid(wanted_label):
+		wanted_label.text = "WANTED  " + str(level) + " / 3"
