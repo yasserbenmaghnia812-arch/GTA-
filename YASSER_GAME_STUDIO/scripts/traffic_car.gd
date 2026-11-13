@@ -5,8 +5,11 @@ var route_index: int = 1
 var cruise_speed: float = 7.0
 var paint_color: Color = Color(0.18, 0.42, 0.72)
 
-func configure(points: Array[Vector3], speed: float, color: Color) -> void:
-	route_points = points.duplicate()
+func configure(points: Array, speed: float, color: Color) -> void:
+	route_points.clear()
+	for point in points:
+		if point is Vector3:
+			route_points.append(point)
 	cruise_speed = speed
 	paint_color = color
 	if not route_points.is_empty():
