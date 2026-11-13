@@ -1,0 +1,117 @@
+extends CharacterBody3D
+
+@export var walk_speed: float = 6.0
+@export var run_speed: float = 9.0
+@export var jump_velocity: float = 4.8
+@export var look_sensitivity: float = 0.0035
+
+@onready var camera_pivot: Node3D = $CameraPivot
+@onready var camera: Camera3D = $CameraPivot/Camera3D
+
+var current_vehicle: VehicleBody3D = null
+var camera_pitch: float = -0.22
+var camera_yaw: float = 0.0
+var _fire_cooldown: float = 0.0
+
+func _ready() -> void:
+	camera_pitch = camera_pivot.rotation.x
+	camera_yaw = rotation.y
+	if not OS.has_feature("mobile"):
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		_look(event.relative)
+	elif event is InputEventScreenDrag:
+		var screen_width := get_viewport_rect().size.x
+		if event.position.x > screen_width * 0.45 and event.position.y < get_viewport_rect().size.y - 210.0:
+			_look(event.relative)
+	elif event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+
+func _look(delta: Vector2) -> void:
+	camera_yaw -= delta.x * look_sensitivity
+	camera_pitch = clampf(camera_pitch - delta.y * look_sensitivity, -0.95, 0.35)
+	rotation.y = camera_yaw
+	camera_pivot.rotation.x = camera_pitch
+
+func _physics_process(delta: float) -> void:
+	_fire_cooldown = maxf(0.0, _fire_cooldown - delta)
+
+	if Input.is_action_just_pressed("fire"):
+		_fire()
+
+	if Input.is_action_just_pressed("interact"):
+		_toggle_vehicle()
+
+	if current_vehicle != null:
+		global_position = current_vehicle.global_position + Vector3(0, 1.1, 0)
+		rotation.y = current_vehicle.rotation.y
+		velocity = Vector3.ZERO
+		return
+
+	var input_dir := Input.get_vector("move_left", "move_right", "move_forward", "move_back")
+	var camera_forward := -camera_pivot.global_transform.basis.z
+	camera_forward.y = 0.0
+	camera_forward = camera_forward.normalized()
+	var camera_right := camera_pivot.global_transform.basis.x
+	camera_right.y = 0.0
+	camera_right = camera_right.normalized()
+	var direction := (camera_right * input_dir.x + camera_forward * -input_dir.y).normalized()
+
+	var target_speed := run_speed if Input.is_action_pressed("sprint") else walk_speed
+	if direction.length_squared() > 0.001:
+		velocity.x = direction.x * target_speed
+		velocity.z = direction.z * target_speed
+	else:
+		velocity.x = move_toward(velocity.x, 0.0, walk_speed * 7.0 * delta)
+		velocity.z = move_toward(velocity.z, 0.0, walk_speed * 7.0 * delta)
+
+	if not is_on_floor():
+		velocity.y -= 9.8 * delta
+	elif Input.is_action_just_pressed("jump"):
+		velocity.y = jump_velocity
+
+	move_and_slide()
+
+func _toggle_vehicle() -> void:
+	if current_vehicle != null:
+		var vehicle := current_vehicle
+		vehicle.set_driver_active(false)
+		current_vehicle = null
+		visible = true
+		collision_layer = 1
+		collision_mask = 1
+		global_position = vehicle.global_position + vehicle.global_transform.basis.x * 2.0 + Vector3(0, 1.0, 0)
+		return
+
+	var nearest: VehicleBody3D = null
+	var nearest_distance := 5.0
+	for candidate in get_tree().get_nodes_in_group("vehicles"):
+		if candidate is VehicleBody3D:
+			var distance := global_position.distance_to(candidate.global_position)
+			if distance < nearest_distance:
+				nearest_distance = distance
+				nearest = candidate
+	if nearest != null:
+		current_vehicle = nearest
+		current_vehicle.set_driver_active(true)
+		visible = false
+		collision_layer = 0
+		collision_mask = 0
+
+func _fire() -> void:
+	if _fire_cooldown > 0.0:
+		return
+	_fire_cooldown = 0.18
+	var origin := camera.global_position
+	var destination := origin - camera.global_transform.basis.z * 90.0
+	var query := PhysicsRayQueryParameters3D.create(origin, destination)
+	query.exclude = [get_rid()]
+	if current_vehicle != null:
+		query.exclude.append(current_vehicle.get_rid())
+	var hit := get_world_3d().direct_space_state.intersect_ray(query)
+	if not hit.is_empty():
+		var target: Object = hit.get("collider")
+		if target != null and target.has_method("take_damage"):
+			target.take_damage(34.0)
