@@ -8,6 +8,8 @@ An original 3D Android game foundation built with Godot 4.7.2. The first playabl
 - Third-person character movement, sprinting, jumping, and camera look.
 - Drivable four-wheel arcade vehicle; press **E** to enter or exit.
 - Simple target-practice ray shooting; press **F**.
+- Three checkpoint missions with rewards and local save progress.
+- Mission progress and credits persist between sessions using Godot `ConfigFile` in `user://`.
 - Mobile touch D-pad and action buttons.
 - Host / Join using ENet UDP port **7777**, with a maximum of 8 peers.
 - Android export preset for **ARM64** and internet permission.
@@ -25,6 +27,7 @@ An original 3D Android game foundation built with Godot 4.7.2. The first playabl
 | Drive / steer | WASD | D-pad |
 | Brake | Space | BRAKE |
 | Look | Mouse | Drag on the right half of the screen |
+| Missions | Reach the cyan checkpoint ring | Reach the cyan checkpoint ring |
 
 For a LAN test, start **HOST** on one device and enter that device's local IP on the other device, then press **JOIN**. Both devices must be on a network that allows device-to-device traffic. Internet play between different networks needs a reachable server or router UDP forwarding for port 7777. This prototype uses client-reported transforms; it is not yet a production authoritative anti-cheat server.
 
