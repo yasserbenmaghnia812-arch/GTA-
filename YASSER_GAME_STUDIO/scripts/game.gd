@@ -5,10 +5,12 @@ const VEHICLE_SCENE = preload("res://scenes/vehicle.tscn")
 const HUD_SCRIPT = preload("res://scripts/hud.gd")
 const REMOTE_SCRIPT = preload("res://scripts/remote_avatar.gd")
 const TARGET_SCRIPT = preload("res://scripts/target.gd")
+const MISSION_SCRIPT = preload("res://scripts/mission_manager.gd")
 
 var player: CharacterBody3D
 var vehicle: VehicleBody3D
 var hud: CanvasLayer
+var mission_manager: Node3D
 var remote_players: Dictionary = {}
 var _network_timer: float = 0.0
 var _rng := RandomNumberGenerator.new()
@@ -21,6 +23,7 @@ func _ready() -> void:
 	player = PLAYER_SCENE.instantiate()
 	add_child(player)
 	player.global_position = Vector3(0, 1.0, 9)
+	player.add_to_group("player")
 
 	vehicle = VEHICLE_SCENE.instantiate()
 	add_child(vehicle)
@@ -30,6 +33,10 @@ func _ready() -> void:
 	add_child(hud)
 	hud.host_requested.connect(host_game)
 	hud.join_requested.connect(join_game)
+	mission_manager = MISSION_SCRIPT.new()
+	add_child(mission_manager)
+	mission_manager.objective_updated.connect(hud.set_objective)
+	mission_manager.mission_completed.connect(_on_mission_completed)
 	_set_status("SOLO MODE  |  E: ENTER VEHICLE  |  F: FIRE")
 
 func _process(delta: float) -> void:
@@ -283,3 +290,6 @@ func _apply_remote_transform(peer_id: int, position: Vector3, yaw: float) -> voi
 func _set_status(message: String) -> void:
 	if is_instance_valid(hud):
 		hud.set_status(message)
+
+func _on_mission_completed(reward: int) -> void:
+	_set_status("MISSION COMPLETE  |  +" + str(reward) + " CREDITS")
