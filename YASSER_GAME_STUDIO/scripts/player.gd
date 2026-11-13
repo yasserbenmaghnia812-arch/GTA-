@@ -1,5 +1,11 @@
 extends CharacterBody3D
 
+const WEAPON_SCRIPT = preload("res://scripts/weapon_system.gd")
+
+signal weapon_status_changed(weapon_name: String, magazine: int, reserve: int)
+signal health_changed(health: int)
+signal crime_reported(position: Vector3)
+
 @export var walk_speed: float = 6.0
 @export var run_speed: float = 9.0
 @export var jump_velocity: float = 4.8
@@ -11,13 +17,21 @@ extends CharacterBody3D
 var current_vehicle: VehicleBody3D = null
 var camera_pitch: float = -0.22
 var camera_yaw: float = 0.0
-var _fire_cooldown: float = 0.0
+var weapon_system
+var health: float = 100.0
+var respawn_timer: float = 0.0
 
 func _ready() -> void:
 	camera_pitch = camera_pivot.rotation.x
 	camera_yaw = rotation.y
 	if not OS.has_feature("mobile"):
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	weapon_system = WEAPON_SCRIPT.new()
+	weapon_system.status_changed.connect(_on_weapon_status_changed)
+	weapon_system.crime_committed.connect(_on_crime_committed)
+	add_child(weapon_system)
+	weapon_system.publish_status()
+	health_changed.emit(int(health))
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
@@ -36,10 +50,19 @@ func _look(delta: Vector2) -> void:
 	camera_pivot.rotation.x = camera_pitch
 
 func _physics_process(delta: float) -> void:
-	_fire_cooldown = maxf(0.0, _fire_cooldown - delta)
+	if health <= 0.0:
+		respawn_timer = maxf(0.0, respawn_timer - delta)
+		if respawn_timer <= 0.0:
+			_respawn()
+		return
 
-	if Input.is_action_just_pressed("fire"):
-		_fire()
+	if weapon_system != null:
+		if Input.is_action_just_pressed("weapon_next"):
+			weapon_system.next_weapon()
+		if Input.is_action_just_pressed("reload"):
+			weapon_system.reload()
+		if Input.is_action_pressed("fire") and current_vehicle == null:
+			weapon_system.try_fire(camera, self)
 
 	if Input.is_action_just_pressed("interact"):
 		_toggle_vehicle()
@@ -100,18 +123,26 @@ func _toggle_vehicle() -> void:
 		collision_layer = 0
 		collision_mask = 0
 
-func _fire() -> void:
-	if _fire_cooldown > 0.0:
-		return
-	_fire_cooldown = 0.18
-	var origin := camera.global_position
-	var destination := origin - camera.global_transform.basis.z * 90.0
-	var query := PhysicsRayQueryParameters3D.create(origin, destination)
-	query.exclude = [get_rid()]
-	if current_vehicle != null:
-		query.exclude.append(current_vehicle.get_rid())
-	var hit := get_world_3d().direct_space_state.intersect_ray(query)
-	if not hit.is_empty():
-		var target: Object = hit.get("collider")
-		if target != null and target.has_method("take_damage"):
-			target.take_damage(34.0)
+func apply_damage(amount: float) -> void:
+	health = maxf(0.0, health - amount)
+	health_changed.emit(int(health))
+	if health <= 0.0:
+		respawn_timer = 3.0
+		if current_vehicle != null:
+			current_vehicle.set_driver_active(false)
+			current_vehicle = null
+		visible = true
+		collision_layer = 1
+		collision_mask = 1
+
+func _respawn() -> void:
+	health = 100.0
+	velocity = Vector3.ZERO
+	global_position = Vector3(0, 1.0, 9.0)
+	health_changed.emit(int(health))
+
+func _on_weapon_status_changed(weapon_name: String, magazine: int, reserve: int) -> void:
+	weapon_status_changed.emit(weapon_name, magazine, reserve)
+
+func _on_crime_committed(position: Vector3) -> void:
+	crime_reported.emit(position)
