@@ -6,12 +6,17 @@ An original 3D Android game foundation built with Godot 4.7.2. The first playabl
 
 - Procedural city blocks and roads generated at runtime.
 - Third-person character movement, sprinting, jumping, and camera look.
-- Drivable four-wheel arcade vehicle; press **E** to enter or exit.
+- Four driveable vehicle presets: sedan, sport, SUV, and pickup; press **E** near a vehicle to enter or exit.
+- Two lightweight visual traffic cars and three low-cost pedestrian patrols.
+- Wanted system with up to three police pursuit units; firing at pedestrians raises wanted level.
+- Three weapon types (pistol, rifle, shotgun), magazines, reserve ammo, spread, fire rates, and timed reloads.
+- Health, police damage, and automatic respawn.
 - Simple target-practice ray shooting; press **F**.
 - Three checkpoint missions with rewards and local save progress.
 - Mission progress and credits persist between sessions using Godot `ConfigFile` in `user://`.
 - Mobile touch D-pad and action buttons.
-- Host / Join using ENet UDP port **7777**, with a maximum of 8 peers.
+- Host / Join using ENet UDP port **7777**, with up to **8 players total** (host plus 7 clients).
+- Server checks remote player coordinates and rejects implausible movement jumps; this remains a prototype, not a cheat-proof authoritative server.
 - Android export preset for **ARM64** and internet permission.
 - GitHub Actions workflow for producing a debug APK artifact.
 
@@ -23,13 +28,15 @@ An original 3D Android game foundation built with Godot 4.7.2. The first playabl
 | Sprint | Shift | RUN |
 | Jump | Space | JUMP |
 | Enter / exit car | E | ENTER / EXIT |
-| Fire | F | FIRE |
+| Fire | Hold F | FIRE |
+| Next weapon | Q | WEAPON |
+| Reload | R | RELOAD |
 | Drive / steer | WASD | D-pad |
 | Brake | Space | BRAKE |
 | Look | Mouse | Drag on the right half of the screen |
 | Missions | Reach the cyan checkpoint ring | Reach the cyan checkpoint ring |
 
-For a LAN test, start **HOST** on one device and enter that device's local IP on the other device, then press **JOIN**. Both devices must be on a network that allows device-to-device traffic. Internet play between different networks needs a reachable server or router UDP forwarding for port 7777. This prototype uses client-reported transforms; it is not yet a production authoritative anti-cheat server.
+For a LAN test, start **HOST** on one device and enter that device's local IP on the other device, then press **JOIN**. Both devices must be on a network that allows device-to-device traffic. Internet play between different networks needs a reachable server or router UDP forwarding for port 7777. This prototype still uses client-reported transforms and does not replicate weapon damage, NPC state, police AI, or vehicle physics between peers. It is not a production authoritative server.
 
 ## Build an Android APK
 
@@ -46,14 +53,15 @@ The generated package ID is **com.yasser.openworld**.
 
 ## Performance targets
 
-The initial profile uses Godot's Compatibility renderer, primitive meshes, no real-time shadows, a small procedural map, and ARM64-only export. These are starting constraints for a 4 GB Android device, not a claim of measured frame rate. Test the resulting APK on the target phone before increasing map density, NPC count, textures, or effects.
+The initial profile uses Godot's Compatibility renderer, primitive meshes, no real-time shadows, two visual traffic cars, three pedestrians, at most three police units, four driveable vehicles, a 30 FPS cap, 30 physics ticks per second, and ARM64-only export. These are conservative starting constraints for a 4 GB Android device, not a claim of measured frame rate or memory use. Test the resulting APK on the Galaxy A06 before increasing map density, NPC count, textures, or effects.
 
 ## Roadmap
 
-1. Replace primitive placeholders with licensed low-poly characters, vehicles, props, and animations.
-2. Add traffic AI, pedestrians, mission scripting, map/garage/economy systems, and save data.
-3. Add server-authoritative multiplayer, lobby flow, reconnection, and dedicated server deployment.
-4. Add FPS/TPS loadouts, recoil, aiming, weapon switching, team modes, and match flow.
+1. Replace primitive placeholders with licensed low-poly characters, vehicle models, props, sounds, and animations.
+2. Add obstacle-aware pedestrian and traffic navigation, traffic collisions, vehicle tuning UI, and garage save data.
+3. Replicate vehicle control, weapon events, NPC/police state, health, and missions over the network.
+4. Add server-authoritative hit validation, lobby flow, reconnection, dedicated server deployment, and network stress tests.
+5. Add weapon recoil, aiming, audio feedback, hit indicators, and additional mission types.
 5. Add a separate football/sports mode using original ball physics, team tactics, player switching, and match rules.
 
 ## Inspirations and licensing
