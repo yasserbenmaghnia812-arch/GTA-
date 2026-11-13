@@ -5,6 +5,7 @@ const WEAPON_SCRIPT = preload("res://scripts/weapon_system.gd")
 signal weapon_status_changed(weapon_name: String, magazine: int, reserve: int)
 signal health_changed(health: int)
 signal crime_reported(position: Vector3)
+signal vehicle_tuning_changed(label: String)
 
 @export var walk_speed: float = 6.0
 @export var run_speed: float = 9.0
@@ -66,6 +67,9 @@ func _physics_process(delta: float) -> void:
 
 	if Input.is_action_just_pressed("interact"):
 		_toggle_vehicle()
+	if Input.is_action_just_pressed("vehicle_tune") and current_vehicle != null:
+		var setup_label: String = str(current_vehicle.call("cycle_tuning"))
+		vehicle_tuning_changed.emit(setup_label)
 
 	if current_vehicle != null:
 		global_position = current_vehicle.global_position + Vector3(0, 1.1, 0)
