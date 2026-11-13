@@ -45,7 +45,7 @@ func _physics_process(delta: float) -> void:
 	offset.y = 0.0
 	var distance := offset.length()
 	if distance > 0.1:
-		var direction := offset.normalized()
+		var direction := _avoid_obstacle(offset.normalized())
 		velocity.x = direction.x * pursuit_speed
 		velocity.z = direction.z * pursuit_speed
 		look_at(global_position + direction, Vector3.UP)
@@ -81,3 +81,34 @@ func _add_beacon(beacon_position: Vector3, color: Color) -> void:
 	material.emission = color
 	beacon.material_override = material
 	add_child(beacon)
+
+func _avoid_obstacle(desired_direction: Vector3) -> Vector3:
+	var space := get_world_3d().direct_space_state
+	var origin := global_position + Vector3.UP * 0.8
+	var forward_query := PhysicsRayQueryParameters3D.create(
+		origin,
+		origin + desired_direction * 5.0
+	)
+	forward_query.exclude = [get_rid()]
+	forward_query.collision_mask = collision_mask
+	var forward_hit := space.intersect_ray(forward_query)
+	if forward_hit.is_empty() or forward_hit.get("collider") == target:
+		return desired_direction
+
+	var side := Vector3.UP.cross(desired_direction).normalized()
+	var left_query := PhysicsRayQueryParameters3D.create(origin, origin - side * 3.0)
+	left_query.exclude = [get_rid()]
+	left_query.collision_mask = collision_mask
+	var right_query := PhysicsRayQueryParameters3D.create(origin, origin + side * 3.0)
+	right_query.exclude = [get_rid()]
+	right_query.collision_mask = collision_mask
+	var left_blocked := not space.intersect_ray(left_query).is_empty()
+	var right_blocked := not space.intersect_ray(right_query).is_empty()
+
+	if left_blocked and not right_blocked:
+		return (desired_direction + side * 0.9).normalized()
+	if right_blocked and not left_blocked:
+		return (desired_direction - side * 0.9).normalized()
+	if not left_blocked and not right_blocked:
+		return (desired_direction + side * 0.65).normalized()
+	return desired_direction
